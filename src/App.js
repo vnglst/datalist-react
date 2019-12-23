@@ -5,13 +5,20 @@ import { countries } from "./data";
 function App() {
   const [country, setCountry] = React.useState("");
   const [number, setNumber] = React.useState("");
+  const [isValidating, setValidating] = React.useState(false);
   const phone = country + number;
   const regex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-  const invalid = !regex.test(phone);
+  const isValid = regex.test(phone);
+  const invalid = isValidating && !isValid;
+
+  function startValidating() {
+    setValidating(true);
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
-    alert(`You entered ${phone}`);
+    startValidating();
+    if (isValid) alert(`You entered ${phone}`);
   }
 
   return (
@@ -26,6 +33,7 @@ function App() {
           id="country-code"
           value={country}
           onChange={e => setCountry(e.target.value)}
+          onBlur={startValidating}
           aria-invalid={invalid}
         />
         <datalist id="countrycodes">
@@ -44,6 +52,7 @@ function App() {
           placeholder="12345678"
           value={number}
           onChange={e => setNumber(e.target.value)}
+          onBlur={startValidating}
           aria-invalid={invalid}
         />
         <div className={`message ${invalid ? "message--invalid" : ""}`}>
